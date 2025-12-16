@@ -1,0 +1,139 @@
+segment_mult:
+  General Population:
+    gender:
+      female: 1.00
+      male: 1.00
+      co: 1.00
+      na: 1.00
+    category:
+      family_classic: 1.00
+      classic_romance: 1.00
+      romantic_tragedy: 1.00
+      classic_comedy: 1.00
+      contemporary: 1.00
+      pop_ip: 1.00
+      dramatic: 1.00
+      adult_literary_drama: 1.00
+      contemporary_mixed_bill: 1.00
+      touring_contemporary_company: 1.00
+
+  Core Classical (F35–64):
+    gender:
+      female: 1.12
+      male: 0.95
+      co: 1.05
+      na: 1.00
+    category:
+      family_classic: 1.10
+      classic_romance: 1.08
+      romantic_tragedy: 1.05
+      classic_comedy: 1.02
+      contemporary: 0.90
+      pop_ip: 1.00
+      dramatic: 1.00
+      adult_literary_drama: 1.00
+      contemporary_mixed_bill: 0.90
+      touring_contemporary_company: 0.90
+
+  Family (Parents w/ kids):
+    gender:
+      female: 1.10
+      male: 0.92
+      co: 1.06
+      na: 1.00
+    category:
+      family_classic: 1.18
+      classic_romance: 0.95
+      romantic_tragedy: 0.85
+      classic_comedy: 1.05
+      contemporary: 0.82
+      pop_ip: 1.20
+      dramatic: 0.90
+      adult_literary_drama: 0.90
+      contemporary_mixed_bill: 0.82
+      touring_contemporary_company: 0.82
+
+  Emerging Adults (18–34):
+    gender:
+      female: 1.02
+      male: 1.02
+      co: 1.00
+      na: 1.00
+    category:
+      family_classic: 0.95
+      classic_romance: 0.92
+      romantic_tragedy: 0.90
+      classic_comedy: 0.98
+      contemporary: 1.25
+      pop_ip: 1.15
+      dramatic: 1.05
+      adult_literary_drama: 1.05
+      contemporary_mixed_bill: 1.25
+      touring_contemporary_company: 1.25
+
+region_mult:
+  Province: 1.00
+  Calgary: 1.05
+  Edmonton: 0.95
+
+city_splits:
+  default_base_city_split:
+    Calgary: 0.60
+    Edmonton: 0.40
+  city_clip_range: [0.15, 0.85]
+  default_subs_share:
+    Calgary: 0.35
+    Edmonton: 0.45
+
+demand:
+  # postcovid_factor REMOVED per audit finding "Structural Pessimism"
+  # Setting to 1.0 eliminates the compounding penalty that reduced predictions by up to 33%
+  postcovid_factor: 1.0
+  ticket_blend_weight: 0.50
+
+seasonality:
+  k_shrink: 3.0
+  min_factor: 0.90
+  max_factor: 1.15
+  n_min: 3
+
+marketing_defaults:
+  default_marketing_spt_city:
+    Calgary: 10.0
+    Edmonton: 8.0
+
+# ============================================================================
+# ML Model & Prediction Settings (New Robust Forecasting Features)
+# ============================================================================
+
+# Calibration settings for adjusting model predictions
+calibration:
+  enabled: false           # Set to true to apply calibration to predictions
+  mode: "global"           # Options: "global", "per_category", "by_remount_bin"
+  params: {}               # Auto-populated from models/calibration.json
+
+# k-NN similarity fallback for cold-start titles
+knn:
+  enabled: true            # Enable KNN fallback for titles without history
+  k: 5                     # Number of nearest neighbors to use
+  metric: "cosine"         # Distance metric: "cosine", "euclidean", "manhattan"
+  recency_weight: 0.5      # Weight for preferring recent shows (0-1)
+  recency_decay: 0.1       # Decay rate per year for older runs
+
+# Trained ML model settings
+model:
+  path: "models/model_xgb_remount_postcovid.joblib"
+  use_for_cold_start: true  # Use ML model for titles without ticket history
+  confidence_threshold: 0.6 # R² threshold below which to prefer KNN fallback
+
+# ============================================================================
+# Security & Privacy Settings
+# ============================================================================
+
+security:
+  # When true, suppress display of raw row-level historical sales data in the UI
+  # Display only aggregates to protect sensitive sales information
+  hide_row_level_data: false
+  
+  # When true, mask specific revenue/ticket numbers in exported reports
+  mask_sensitive_exports: false
