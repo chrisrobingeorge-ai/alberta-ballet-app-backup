@@ -19,6 +19,29 @@ A Streamlit application for predicting ticket sales and planning ballet seasons 
 - **k-NN Cold-Start Fallback**: Similarity-based predictions for new titles
 - **Prediction Calibration**: Adjustable calibration for model predictions
 
+## Repository Structure
+
+The repository has been organized to separate active application code from legacy training scripts and archived code:
+
+```
+streamlit_app_copy.py    # Main Streamlit application (ENTRY POINT)
+title_scoring_helper.py  # Standalone title scoring utility
+config/                  # Configuration and registry modules
+data/                    # Data loading and processing
+ml/                      # Active ML modules (k-NN fallback, prediction utils)
+utils/                   # Utility modules (economic factors, API clients)
+pages/                   # Additional Streamlit pages
+tests/                   # Test suite (preserved for CI/CD)
+archive/20251216/        # Archived legacy code and unused modules
+  ├── training_scripts/  # Model training pipeline scripts
+  ├── integrations/      # External API integrations (archtics, ticketmaster, etc.)
+  ├── features/          # Feature engineering modules
+  ├── ml_legacy/         # Legacy ML training modules
+  └── docs_orphan/       # Historical documentation
+```
+
+**Note:** Training and data science scripts have been moved to `archive/20251216/` to declutter the root directory. They remain available if needed for model retraining.
+
 ## How to Run
 
 ### 1. Install the requirements
@@ -31,7 +54,7 @@ pip install -r requirements.txt
 
 ```bash
 # Main application (full season planning and analytics)
-streamlit run streamlit_app.py
+streamlit run streamlit_app_copy.py
 
 # Title Scoring Helper (score individual titles without historical data)
 streamlit run title_scoring_helper.py
